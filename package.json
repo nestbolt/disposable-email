@@ -1,6 +1,7 @@
 {
   "name": "@nestbolt/disposable-email",
   "version": "1.0.0",
+  "packageManager": "pnpm@9.15.4",
   "description": "NestJS validation decorator to block disposable/throwaway email addresses",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
