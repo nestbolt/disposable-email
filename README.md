@@ -1,12 +1,12 @@
 <p align="center">
-    <h1 align="center">NestJS Disposable Email</h1>
+    <h1 align="center">@nestbolt/disposable-email</h1>
     <p align="center">Block disposable email addresses in your NestJS application with a single decorator.</p>
 </p>
 
 <p align="center">
-    <a href="https://www.npmjs.com/package/nestjs-disposable-email"><img src="https://img.shields.io/npm/v/nestjs-disposable-email.svg?style=flat-square" alt="npm version"></a>
-    <a href="https://www.npmjs.com/package/nestjs-disposable-email"><img src="https://img.shields.io/npm/dt/nestjs-disposable-email.svg?style=flat-square" alt="npm downloads"></a>
-    <a href="https://github.com/khatabwedaa/nestjs-disposable-email/actions"><img src="https://img.shields.io/github/actions/workflow/status/khatabwedaa/nestjs-disposable-email/tests.yml?branch=main&style=flat-square&label=tests" alt="tests"></a>
+    <a href="https://www.npmjs.com/package/@nestbolt/disposable-email"><img src="https://img.shields.io/npm/v/@nestbolt/disposable-email.svg?style=flat-square" alt="npm version"></a>
+    <a href="https://www.npmjs.com/package/@nestbolt/disposable-email"><img src="https://img.shields.io/npm/dt/@nestbolt/disposable-email.svg?style=flat-square" alt="npm downloads"></a>
+    <a href="https://github.com/nestbolt/disposable-email/actions"><img src="https://img.shields.io/github/actions/workflow/status/nestbolt/disposable-email/tests.yml?branch=main&style=flat-square&label=tests" alt="tests"></a>
     <a href="https://opensource.org/licenses/MIT"><img src="https://img.shields.io/badge/license-MIT-brightgreen.svg?style=flat-square" alt="license"></a>
 </p>
 
@@ -17,7 +17,7 @@ This package provides a **class-validator** decorator for [NestJS](https://nestj
 Once installed, blocking disposable emails is as simple as adding a decorator to your DTO:
 
 ```typescript
-import { IsNotDisposableEmail } from 'nestjs-disposable-email';
+import { IsNotDisposableEmail } from '@nestbolt/disposable-email';
 
 class CreateUserDto {
   @IsEmail()
@@ -56,19 +56,19 @@ Uses the disposable domains list from [disposable/disposable](https://github.com
 Install the package via npm:
 
 ```bash
-npm install nestjs-disposable-email
+npm install @nestbolt/disposable-email
 ```
 
 Or via yarn:
 
 ```bash
-yarn add nestjs-disposable-email
+yarn add @nestbolt/disposable-email
 ```
 
 Or via pnpm:
 
 ```bash
-pnpm add nestjs-disposable-email
+pnpm add @nestbolt/disposable-email
 ```
 
 ### Peer Dependencies
@@ -89,7 +89,7 @@ reflect-metadata ^0.1.13 || ^0.2.0
 
 ```typescript
 import { Module } from '@nestjs/common';
-import { DisposableEmailModule } from 'nestjs-disposable-email';
+import { DisposableEmailModule } from '@nestbolt/disposable-email';
 
 @Module({
   imports: [
@@ -124,7 +124,7 @@ bootstrap();
 
 ```typescript
 import { IsEmail, IsNotEmpty } from 'class-validator';
-import { IsNotDisposableEmail } from 'nestjs-disposable-email';
+import { IsNotDisposableEmail } from '@nestbolt/disposable-email';
 
 export class CreateUserDto {
   @IsNotEmpty()
@@ -155,7 +155,7 @@ Pass options directly to `forRoot()`:
 
 ```typescript
 import { Module } from '@nestjs/common';
-import { DisposableEmailModule } from 'nestjs-disposable-email';
+import { DisposableEmailModule } from '@nestbolt/disposable-email';
 
 @Module({
   imports: [
@@ -179,7 +179,7 @@ Use `forRootAsync()` when your configuration depends on other services, such as 
 ```typescript
 import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
-import { DisposableEmailModule } from 'nestjs-disposable-email';
+import { DisposableEmailModule } from '@nestbolt/disposable-email';
 
 @Module({
   imports: [
@@ -206,7 +206,7 @@ The `@IsNotDisposableEmail()` decorator works just like any other **class-valida
 
 ```typescript
 import { IsEmail } from 'class-validator';
-import { IsNotDisposableEmail } from 'nestjs-disposable-email';
+import { IsNotDisposableEmail } from '@nestbolt/disposable-email';
 
 export class RegisterDto {
   @IsEmail()
@@ -233,7 +233,7 @@ You can also inject `DisposableEmailService` anywhere in your application for pr
 
 ```typescript
 import { Injectable } from '@nestjs/common';
-import { DisposableEmailService } from 'nestjs-disposable-email';
+import { DisposableEmailService } from '@nestbolt/disposable-email';
 
 @Injectable()
 export class UsersService {
@@ -303,7 +303,7 @@ Whitelisted domains are removed from the disposable set at load time, so there i
 By default, the package uses the native `fetch()` API to retrieve domain lists. If your application runs behind a proxy or needs custom headers, implement the `Fetcher` interface:
 
 ```typescript
-import { Fetcher } from 'nestjs-disposable-email';
+import { Fetcher } from '@nestbolt/disposable-email';
 import { HttpsProxyAgent } from 'https-proxy-agent';
 
 export class ProxyFetcher implements Fetcher {
@@ -338,7 +338,7 @@ The package ships with a bundled `domains.json` containing thousands of known di
 ```typescript
 import { Injectable } from '@nestjs/common';
 import { Cron, CronExpression } from '@nestjs/schedule';
-import { DisposableEmailService } from 'nestjs-disposable-email';
+import { DisposableEmailService } from '@nestbolt/disposable-email';
 
 @Injectable()
 export class DomainsUpdateTask {
@@ -355,7 +355,7 @@ export class DomainsUpdateTask {
 
 ```typescript
 import { Controller, Post, UseGuards } from '@nestjs/common';
-import { DisposableEmailService } from 'nestjs-disposable-email';
+import { DisposableEmailService } from '@nestbolt/disposable-email';
 
 @Controller('admin')
 export class AdminController {
@@ -378,7 +378,7 @@ The `@IsNotDisposableEmail()` decorator also works **without** registering the N
 
 ```typescript
 import { validate } from 'class-validator';
-import { IsNotDisposableEmail } from 'nestjs-disposable-email';
+import { IsNotDisposableEmail } from '@nestbolt/disposable-email';
 
 class EmailDto {
   @IsNotDisposableEmail()
@@ -422,7 +422,7 @@ Please see [CONTRIBUTING](CONTRIBUTING.md) for details.
 
 ## Security
 
-If you discover any security-related issues, please report them via [GitHub Issues](https://github.com/khatabwedaa/nestjs-disposable-email/issues) with the **security** label instead of using the public issue tracker.
+If you discover any security-related issues, please report them via [GitHub Issues](https://github.com/nestbolt/disposable-email/issues) with the **security** label instead of using the public issue tracker.
 
 ## Credits
 
