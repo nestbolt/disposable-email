@@ -1,0 +1,49 @@
+{
+  "name": "nestjs-disposable-email",
+  "version": "1.0.0",
+  "description": "NestJS validation decorator to block disposable/throwaway email addresses",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "files": [
+    "dist",
+    "domains.json"
+  ],
+  "scripts": {
+    "build": "tsc -p tsconfig.build.json",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:cov": "vitest run --coverage",
+    "lint": "eslint 'src/**/*.ts'",
+    "prepublishOnly": "npm run build"
+  },
+  "keywords": [
+    "nestjs",
+    "email",
+    "disposable",
+    "throwaway",
+    "temporary",
+    "validation",
+    "class-validator",
+    "dto",
+    "decorator"
+  ],
+  "license": "MIT",
+  "peerDependencies": {
+    "@nestjs/common": "^10.0.0 || ^11.0.0",
+    "@nestjs/core": "^10.0.0 || ^11.0.0",
+    "class-transformer": "^0.5.0",
+    "class-validator": "^0.14.0",
+    "reflect-metadata": "^0.1.13 || ^0.2.0"
+  },
+  "devDependencies": {
+    "@nestjs/common": "^11.0.0",
+    "@nestjs/core": "^11.0.0",
+    "@nestjs/testing": "^11.0.0",
+    "@types/node": "^20.0.0",
+    "class-transformer": "^0.5.1",
+    "class-validator": "^0.14.1",
+    "reflect-metadata": "^0.2.2",
+    "typescript": "^5.5.0",
+    "vitest": "^4.1.0"
+  }
+}
