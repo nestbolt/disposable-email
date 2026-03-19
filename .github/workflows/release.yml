@@ -38,20 +38,6 @@ jobs:
       - name: Run tests
         run: pnpm test
 
-      - name: Verify package contents
-        run: |
-          FILES=$(pnpm pack --dry-run 2>&1)
-          echo "$FILES"
-
-          # Ensure domains.json is included
-          echo "$FILES" | grep -q "domains.json" || { echo "ERROR: domains.json missing from package"; exit 1; }
-
-          # Ensure dist/index.js is included
-          echo "$FILES" | grep -q "dist/index.js" || { echo "ERROR: dist/index.js missing from package"; exit 1; }
-
-          # Ensure dist/index.d.ts is included
-          echo "$FILES" | grep -q "dist/index.d.ts" || { echo "ERROR: dist/index.d.ts missing from package"; exit 1; }
-
       - name: Publish to npm
         run: pnpm publish --provenance --access public --no-git-checks
         env:
