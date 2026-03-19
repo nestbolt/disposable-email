@@ -73,6 +73,15 @@ describe('DisposableEmailService', () => {
 
       expect(svc.isDisposable('user@mailinator.com')).toBe(false);
     });
+
+    it('should normalize whitelist entries to lowercase', async () => {
+      const svc = await createService({
+        whitelist: ['MAILINATOR.COM', 'Guerrillamail.Com'],
+      });
+
+      expect(svc.isDisposable('user@mailinator.com')).toBe(false);
+      expect(svc.isDisposable('user@guerrillamail.com')).toBe(false);
+    });
   });
 
   describe('includeSubdomains', () => {
@@ -289,7 +298,7 @@ describe('DisposableEmailService', () => {
       vi.restoreAllMocks();
     });
 
-    it('should handle write errors gracefully', async () => {
+    it('should handle write errors gracefully and still update memory', async () => {
       vi.spyOn(Logger.prototype, 'error').mockImplementation(() => {});
 
       const mockFetcher: Fetcher = {
@@ -305,8 +314,8 @@ describe('DisposableEmailService', () => {
       // Should not throw - error is logged
       await svc.updateDomains();
 
-      // Domains should NOT be updated when write fails (early return)
-      expect(svc.isDisposable('user@domain.com')).toBe(false);
+      // Domains SHOULD be updated in memory even when write fails
+      expect(svc.isDisposable('user@domain.com')).toBe(true);
       vi.restoreAllMocks();
     });
   });

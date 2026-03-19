@@ -34,7 +34,7 @@ export interface DisposableEmailOptions {
 export interface DisposableEmailAsyncOptions {
   imports?: any[];
   inject?: any[];
-  useFactory?: (
+  useFactory: (
     ...args: any[]
   ) => Promise<DisposableEmailOptions> | DisposableEmailOptions;
 }

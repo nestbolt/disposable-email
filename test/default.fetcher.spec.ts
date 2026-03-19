@@ -25,6 +25,7 @@ describe('DefaultFetcher', () => {
     expect(result).toEqual(mockDomains);
     expect(globalThis.fetch).toHaveBeenCalledWith(
       'https://example.com/domains.json',
+      expect.objectContaining({ signal: expect.any(AbortSignal) }),
     );
   });
 
@@ -53,5 +54,40 @@ describe('DefaultFetcher', () => {
     await expect(
       fetcher.fetch('https://example.com/bad.json'),
     ).rejects.toThrow('Source did not return a JSON array (got object)');
+  });
+
+  it('should use default timeout of 30s', () => {
+    const f = new DefaultFetcher();
+    expect((f as any).timeoutMs).toBe(30_000);
+  });
+
+  it('should accept a custom timeout', () => {
+    const f = new DefaultFetcher(5000);
+    expect((f as any).timeoutMs).toBe(5000);
+  });
+
+  it('should throw a timeout error when request exceeds timeout', async () => {
+    const fastFetcher = new DefaultFetcher(1);
+
+    globalThis.fetch = vi.fn().mockImplementation(
+      (_url: string, init: { signal: AbortSignal }) =>
+        new Promise((_resolve, reject) => {
+          init.signal.addEventListener('abort', () => {
+            reject(new DOMException('The operation was aborted.', 'AbortError'));
+          });
+        }),
+    );
+
+    await expect(
+      fastFetcher.fetch('https://example.com/slow'),
+    ).rejects.toThrow('Request to https://example.com/slow timed out after 1ms');
+  });
+
+  it('should re-throw non-abort errors as-is', async () => {
+    globalThis.fetch = vi.fn().mockRejectedValue(new Error('DNS failure'));
+
+    await expect(
+      fetcher.fetch('https://example.com/fail'),
+    ).rejects.toThrow('DNS failure');
   });
 });
