@@ -1,5 +1,6 @@
 import { Inject, Injectable, Logger, OnModuleInit } from "@nestjs/common";
 import { existsSync, readFileSync, writeFileSync } from "fs";
+import { isAbsolute, resolve } from "path";
 import {
   BUNDLED_DOMAINS_PATH,
   DEFAULT_SOURCE_URL,
@@ -24,7 +25,7 @@ export class DisposableEmailService implements OnModuleInit {
     options: DisposableEmailOptions,
   ) {
     this.sources = options.sources ?? [DEFAULT_SOURCE_URL];
-    this.storagePath = options.storagePath ?? "";
+    this.storagePath = this.validateStoragePath(options.storagePath);
     this.whitelist = (options.whitelist ?? []).map((d) => d.toLowerCase());
     this.includeSubdomains = options.includeSubdomains ?? false;
     this.fetcher = options.fetcher ?? new DefaultFetcher();
@@ -132,5 +133,19 @@ export class DisposableEmailService implements OnModuleInit {
     const parts = email.split("@");
     if (parts.length !== 2 || !parts[1]) return null;
     return parts[1].toLowerCase();
+  }
+
+  private validateStoragePath(raw?: string): string {
+    if (!raw) return "";
+
+    const resolved = isAbsolute(raw) ? raw : resolve(raw);
+
+    if (!resolved.endsWith(".json")) {
+      throw new Error(
+        `Invalid storagePath "${resolved}": must end with .json`,
+      );
+    }
+
+    return resolved;
   }
 }

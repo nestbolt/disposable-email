@@ -125,6 +125,39 @@ describe('DisposableEmailService', () => {
     });
   });
 
+  describe('storagePath validation', () => {
+    it('should accept a valid .json path', async () => {
+      const svc = await createService({
+        storagePath: '/tmp/domains.json',
+      });
+      expect(svc).toBeDefined();
+    });
+
+    it('should reject a path that does not end with .json', () => {
+      expect(
+        createService({ storagePath: '/etc/passwd' }),
+      ).rejects.toThrow('Invalid storagePath "/etc/passwd": must end with .json');
+    });
+
+    it('should reject a path ending with other extensions', () => {
+      expect(
+        createService({ storagePath: '/tmp/domains.txt' }),
+      ).rejects.toThrow('must end with .json');
+    });
+
+    it('should resolve relative paths', async () => {
+      const svc = await createService({
+        storagePath: './data/domains.json',
+      });
+      expect(svc).toBeDefined();
+    });
+
+    it('should allow empty/undefined storagePath', async () => {
+      const svc = await createService({});
+      expect(svc).toBeDefined();
+    });
+  });
+
   describe('bootstrap with storagePath', () => {
     const tmpDir = join(__dirname, '__tmp__');
     const tmpFile = join(tmpDir, 'test-domains.json');
