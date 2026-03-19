@@ -1,1 +1,1 @@
-export { IsNotDisposableEmailConstraint } from './is-not-disposable-email.constraint';
+export { IsNotDisposableEmailConstraint } from "./is-not-disposable-email.constraint";

@@ -18,6 +18,29 @@ jobs:
       - name: Download new file
         run: curl -fsSL https://cdn.jsdelivr.net/gh/disposable/disposable-email-domains@master/domains.json --output domains.json
 
+      - name: Validate domains.json
+        run: |
+          # Must be valid JSON
+          node -e "JSON.parse(require('fs').readFileSync('domains.json', 'utf-8'))"
+
+          # Must be a non-empty array
+          COUNT=$(node -e "const d = JSON.parse(require('fs').readFileSync('domains.json', 'utf-8')); console.log(d.length)")
+          echo "Domain count: $COUNT"
+
+          # Sanity check: expect at least 50,000 domains
+          if [ "$COUNT" -lt 50000 ]; then
+            echo "ERROR: Domain count ($COUNT) is below minimum threshold (50,000). Aborting."
+            exit 1
+          fi
+
+          # File size check: must be at least 500KB
+          SIZE=$(wc -c < domains.json | tr -d ' ')
+          echo "File size: $SIZE bytes"
+          if [ "$SIZE" -lt 500000 ]; then
+            echo "ERROR: File size ($SIZE bytes) is suspiciously small. Aborting."
+            exit 1
+          fi
+
       - name: Determine next patch version
         id: versioning
         run: |

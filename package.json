@@ -1,10 +1,16 @@
 {
   "name": "@nestbolt/disposable-email",
-  "version": "0.3.0",
+  "version": "1.0.0",
   "packageManager": "pnpm@9.15.4",
   "description": "NestJS validation decorator to block disposable/throwaway email addresses",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    }
+  },
   "files": [
     "dist",
     "domains.json"
@@ -14,7 +20,9 @@
     "test": "vitest run",
     "test:watch": "vitest",
     "test:cov": "vitest run --coverage",
-    "lint": "eslint 'src/**/*.ts'",
+    "lint": "eslint 'src/**/*.ts' 'test/**/*.ts'",
+    "lint:fix": "eslint 'src/**/*.ts' 'test/**/*.ts' --fix",
+    "format": "prettier --write 'src/**/*.ts' 'test/**/*.ts'",
     "prepublishOnly": "npm run build"
   },
   "keywords": [
@@ -28,10 +36,18 @@
     "dto",
     "decorator"
   ],
+  "author": "Nestbolt",
   "license": "MIT",
+  "homepage": "https://github.com/nestbolt/disposable-email#readme",
   "repository": {
     "type": "git",
     "url": "https://github.com/nestbolt/disposable-email"
+  },
+  "bugs": {
+    "url": "https://github.com/nestbolt/disposable-email/issues"
+  },
+  "engines": {
+    "node": ">=20.0.0"
   },
   "peerDependencies": {
     "@nestjs/common": "^10.0.0 || ^11.0.0",
@@ -41,15 +57,21 @@
     "reflect-metadata": "^0.1.13 || ^0.2.0"
   },
   "devDependencies": {
+    "@eslint/js": "^10.0.1",
     "@nestjs/common": "^11.0.0",
     "@nestjs/core": "^11.0.0",
     "@nestjs/testing": "^11.0.0",
-    "@types/node": "^20.0.0",
+    "@types/node": "^20.19.37",
     "@vitest/coverage-v8": "^4.1.0",
     "class-transformer": "^0.5.1",
     "class-validator": "^0.14.1",
+    "eslint": "^10.0.3",
+    "eslint-config-prettier": "^10.1.8",
+    "eslint-plugin-prettier": "^5.5.5",
+    "prettier": "^3.8.1",
     "reflect-metadata": "^0.2.2",
     "typescript": "^5.5.0",
+    "typescript-eslint": "^8.57.1",
     "vitest": "^4.1.0"
   }
 }

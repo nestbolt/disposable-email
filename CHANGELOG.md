@@ -2,6 +2,32 @@
 
 All notable changes to `@nestbolt/disposable-email` will be documented in this file.
 
+## 1.0.0 — Stable Release
+
+### Fixed
+
+- **`storagePath` validation** — Must end with `.json`. Relative paths are resolved to absolute. Invalid paths throw immediately at construction time.
+
+### Performance
+
+- **Subdomain matching is now O(k) instead of O(n)** — Previously looped through all 72K domains per validation. Now walks up the input domain's parent labels with Set lookups (2-4 checks vs 72,000).
+- **Async bootstrap** — `bootstrap()` now uses async file I/O (`fs/promises`) instead of `readFileSync`, no longer blocking the event loop during startup.
+
+### Added
+
+- **ESLint & Prettier** — Full linting and formatting with `typescript-eslint` and Prettier integration. New scripts: `lint`, `lint:fix`, `format`.
+- **`.npmignore`** — Explicit control over published package contents. Only `dist/`, `domains.json`, and documentation files ship to npm.
+- **`package.json` metadata** — Added `exports`, `homepage`, `bugs`, `author`, and `engines` fields.
+
+### Reliability
+
+- **Update-domains workflow validation** — Downloaded `domains.json` is now verified (valid JSON, array with 50K+ entries, file size 500KB+) before committing.
+- **Release workflow package verification** — Checks that `domains.json`, `dist/index.js`, and `dist/index.d.ts` are included before publishing.
+
+### Changed
+
+- TypeScript target bumped from ES2021 to ES2022 (required for `Error` cause option, safe for Node 20+).
+
 ## 0.3.0 — Bug Fixes & Reliability
 
 ### Fixed

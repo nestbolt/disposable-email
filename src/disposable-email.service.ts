@@ -1,5 +1,7 @@
 import { Inject, Injectable, Logger, OnModuleInit } from "@nestjs/common";
-import { existsSync, readFileSync, writeFileSync } from "fs";
+import { existsSync, writeFileSync } from "fs";
+import { readFile } from "fs/promises";
+import { isAbsolute, resolve } from "path";
 import {
   BUNDLED_DOMAINS_PATH,
   DEFAULT_SOURCE_URL,
@@ -24,20 +26,20 @@ export class DisposableEmailService implements OnModuleInit {
     options: DisposableEmailOptions,
   ) {
     this.sources = options.sources ?? [DEFAULT_SOURCE_URL];
-    this.storagePath = options.storagePath ?? "";
+    this.storagePath = this.validateStoragePath(options.storagePath);
     this.whitelist = (options.whitelist ?? []).map((d) => d.toLowerCase());
     this.includeSubdomains = options.includeSubdomains ?? false;
     this.fetcher = options.fetcher ?? new DefaultFetcher();
   }
 
-  onModuleInit() {
-    this.bootstrap();
+  async onModuleInit() {
+    await this.bootstrap();
   }
 
   /**
    * Loads domains from local storage (if available) or the bundled list.
    */
-  bootstrap(): void {
+  async bootstrap(): Promise<void> {
     let domainsPath: string;
 
     if (this.storagePath && existsSync(this.storagePath)) {
@@ -47,11 +49,9 @@ export class DisposableEmailService implements OnModuleInit {
     }
 
     try {
-      const raw = readFileSync(domainsPath, "utf-8");
+      const raw = await readFile(domainsPath, "utf-8");
       const data: string[] = JSON.parse(raw);
-      const whiteSet = new Set(this.whitelist);
-      this.domains = new Set(data.filter((d) => !whiteSet.has(d)));
-      this.logger.log(`Loaded ${this.domains.size} disposable domains`);
+      this.loadDomains(data);
     } catch (error) {
       this.logger.error("Failed to load disposable domains", error);
     }
@@ -69,8 +69,11 @@ export class DisposableEmailService implements OnModuleInit {
     }
 
     if (this.includeSubdomains) {
-      for (const root of this.domains) {
-        if (domain.endsWith("." + root)) {
+      // Walk up parent labels: sub.deep.mailinator.com → deep.mailinator.com → mailinator.com
+      const parts = domain.split(".");
+      for (let i = 1; i < parts.length - 1; i++) {
+        const parent = parts.slice(i).join(".");
+        if (this.domains.has(parent)) {
           return true;
         }
       }
@@ -112,25 +115,40 @@ export class DisposableEmailService implements OnModuleInit {
 
     allDomains = [...new Set(allDomains)];
 
-    const whiteSet = new Set(this.whitelist);
-    this.domains = new Set(allDomains.filter((d) => !whiteSet.has(d)));
+    this.loadDomains(allDomains);
     this.logger.log(`Disposable domains updated: ${this.domains.size} entries`);
 
     if (this.storagePath) {
       try {
         writeFileSync(this.storagePath, JSON.stringify(allDomains));
-        this.logger.log(
-          `Saved ${allDomains.length} domains to ${this.storagePath}`,
-        );
+        this.logger.log(`Saved ${allDomains.length} domains to ${this.storagePath}`);
       } catch (error) {
         this.logger.error(`Failed to write to ${this.storagePath}`, error);
       }
     }
   }
 
+  private loadDomains(data: string[]): void {
+    const whiteSet = new Set(this.whitelist);
+    this.domains = new Set(data.filter((d) => !whiteSet.has(d)));
+    this.logger.log(`Loaded ${this.domains.size} disposable domains`);
+  }
+
   private extractDomain(email: string): string | null {
     const parts = email.split("@");
     if (parts.length !== 2 || !parts[1]) return null;
     return parts[1].toLowerCase();
+  }
+
+  private validateStoragePath(raw?: string): string {
+    if (!raw) return "";
+
+    const resolved = isAbsolute(raw) ? raw : resolve(raw);
+
+    if (!resolved.endsWith(".json")) {
+      throw new Error(`Invalid storagePath "${resolved}": must end with .json`);
+    }
+
+    return resolved;
   }
 }
