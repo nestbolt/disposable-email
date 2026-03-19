@@ -17,7 +17,7 @@ This package provides a **class-validator** decorator for [NestJS](https://nestj
 Once installed, blocking disposable emails is as simple as adding a decorator to your DTO:
 
 ```typescript
-import { IsNotDisposableEmail } from '@nestbolt/disposable-email';
+import { IsNotDisposableEmail } from "@nestbolt/disposable-email";
 
 class CreateUserDto {
   @IsEmail()
@@ -88,13 +88,11 @@ reflect-metadata ^0.1.13 || ^0.2.0
 **1.** Register the module in your `AppModule`:
 
 ```typescript
-import { Module } from '@nestjs/common';
-import { DisposableEmailModule } from '@nestbolt/disposable-email';
+import { Module } from "@nestjs/common";
+import { DisposableEmailModule } from "@nestbolt/disposable-email";
 
 @Module({
-  imports: [
-    DisposableEmailModule.forRoot(),
-  ],
+  imports: [DisposableEmailModule.forRoot()],
 })
 export class AppModule {}
 ```
@@ -102,10 +100,10 @@ export class AppModule {}
 **2.** Enable class-validator's DI container in `main.ts`:
 
 ```typescript
-import { NestFactory } from '@nestjs/core';
-import { ValidationPipe } from '@nestjs/common';
-import { useContainer } from 'class-validator';
-import { AppModule } from './app.module';
+import { NestFactory } from "@nestjs/core";
+import { ValidationPipe } from "@nestjs/common";
+import { useContainer } from "class-validator";
+import { AppModule } from "./app.module";
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -123,8 +121,8 @@ bootstrap();
 **3.** Use the `@IsNotDisposableEmail()` decorator in your DTOs:
 
 ```typescript
-import { IsEmail, IsNotEmpty } from 'class-validator';
-import { IsNotDisposableEmail } from '@nestbolt/disposable-email';
+import { IsEmail, IsNotEmpty } from "class-validator";
+import { IsNotDisposableEmail } from "@nestbolt/disposable-email";
 
 export class CreateUserDto {
   @IsNotEmpty()
@@ -154,17 +152,17 @@ That's it! Any request with a disposable email will now receive a `400 Bad Reque
 Pass options directly to `forRoot()`:
 
 ```typescript
-import { Module } from '@nestjs/common';
-import { DisposableEmailModule } from '@nestbolt/disposable-email';
+import { Module } from "@nestjs/common";
+import { DisposableEmailModule } from "@nestbolt/disposable-email";
 
 @Module({
   imports: [
     DisposableEmailModule.forRoot({
-      whitelist: ['example.com', 'mycompany.com'],
+      whitelist: ["example.com", "mycompany.com"],
       includeSubdomains: true,
-      storagePath: './storage/disposable_domains.json',
+      storagePath: "./storage/disposable_domains.json",
       sources: [
-        'https://cdn.jsdelivr.net/gh/disposable/disposable-email-domains@master/domains.json',
+        "https://cdn.jsdelivr.net/gh/disposable/disposable-email-domains@master/domains.json",
       ],
     }),
   ],
@@ -177,9 +175,9 @@ export class AppModule {}
 Use `forRootAsync()` when your configuration depends on other services, such as `ConfigService`:
 
 ```typescript
-import { Module } from '@nestjs/common';
-import { ConfigModule, ConfigService } from '@nestjs/config';
-import { DisposableEmailModule } from '@nestbolt/disposable-email';
+import { Module } from "@nestjs/common";
+import { ConfigModule, ConfigService } from "@nestjs/config";
+import { DisposableEmailModule } from "@nestbolt/disposable-email";
 
 @Module({
   imports: [
@@ -188,9 +186,15 @@ import { DisposableEmailModule } from '@nestbolt/disposable-email';
       imports: [ConfigModule],
       inject: [ConfigService],
       useFactory: (config: ConfigService) => ({
-        whitelist: config.get<string>('DISPOSABLE_WHITELIST', '').split(',').filter(Boolean),
-        includeSubdomains: config.get<boolean>('DISPOSABLE_INCLUDE_SUBDOMAINS', false),
-        storagePath: config.get<string>('DISPOSABLE_STORAGE_PATH', ''),
+        whitelist: config
+          .get<string>("DISPOSABLE_WHITELIST", "")
+          .split(",")
+          .filter(Boolean),
+        includeSubdomains: config.get<boolean>(
+          "DISPOSABLE_INCLUDE_SUBDOMAINS",
+          false,
+        ),
+        storagePath: config.get<string>("DISPOSABLE_STORAGE_PATH", ""),
       }),
     }),
   ],
@@ -205,13 +209,13 @@ export class AppModule {}
 The `@IsNotDisposableEmail()` decorator works just like any other **class-validator** decorator. You can combine it with other validators and customize the error message:
 
 ```typescript
-import { IsEmail } from 'class-validator';
-import { IsNotDisposableEmail } from '@nestbolt/disposable-email';
+import { IsEmail } from "class-validator";
+import { IsNotDisposableEmail } from "@nestbolt/disposable-email";
 
 export class RegisterDto {
   @IsEmail()
   @IsNotDisposableEmail({
-    message: 'Please use a permanent email address to register.',
+    message: "Please use a permanent email address to register.",
   })
   email: string;
 }
@@ -222,7 +226,7 @@ export class RegisterDto {
 ```typescript
 export class UpdateProfileDto {
   @IsEmail()
-  @IsNotDisposableEmail({ groups: ['registration'] })
+  @IsNotDisposableEmail({ groups: ["registration"] })
   email: string;
 }
 ```
@@ -232,8 +236,8 @@ export class UpdateProfileDto {
 You can also inject `DisposableEmailService` anywhere in your application for programmatic checks:
 
 ```typescript
-import { Injectable } from '@nestjs/common';
-import { DisposableEmailService } from '@nestbolt/disposable-email';
+import { Injectable } from "@nestjs/common";
+import { DisposableEmailService } from "@nestbolt/disposable-email";
 
 @Injectable()
 export class UsersService {
@@ -241,7 +245,7 @@ export class UsersService {
 
   async createUser(email: string) {
     if (this.disposableEmail.isDisposable(email)) {
-      throw new BadRequestException('Disposable emails are not allowed');
+      throw new BadRequestException("Disposable emails are not allowed");
     }
 
     // ... create the user
@@ -251,23 +255,23 @@ export class UsersService {
 
 ### Available Service Methods
 
-| Method | Returns | Description |
-|--------|---------|-------------|
-| `isDisposable(email)` | `boolean` | Returns `true` if the email's domain is disposable |
-| `isNotDisposable(email)` | `boolean` | Returns `true` if the email's domain is **not** disposable |
-| `getDomains()` | `string[]` | Returns the full list of loaded disposable domains |
-| `updateDomains()` | `Promise<void>` | Fetches fresh domains from the configured sources |
-| `bootstrap()` | `void` | Reloads domains from local storage or the bundled list |
+| Method                   | Returns         | Description                                                |
+| ------------------------ | --------------- | ---------------------------------------------------------- |
+| `isDisposable(email)`    | `boolean`       | Returns `true` if the email's domain is disposable         |
+| `isNotDisposable(email)` | `boolean`       | Returns `true` if the email's domain is **not** disposable |
+| `getDomains()`           | `string[]`      | Returns the full list of loaded disposable domains         |
+| `updateDomains()`        | `Promise<void>` | Fetches fresh domains from the configured sources          |
+| `bootstrap()`            | `void`          | Reloads domains from local storage or the bundled list     |
 
 ## Configuration Options
 
-| Option | Type | Default | Description |
-|--------|------|---------|-------------|
-| `sources` | `string[]` | jsDelivr CDN URL | Source URLs returning JSON arrays of disposable domains |
-| `storagePath` | `string` | `''` | Local file path to persist fetched domains. When empty, only the bundled list is used |
-| `whitelist` | `string[]` | `[]` | Domains to exclude from the disposable list (allow through validation) |
-| `includeSubdomains` | `boolean` | `false` | When `true`, subdomains of disposable domains are also rejected |
-| `fetcher` | `Fetcher` | `DefaultFetcher` | Custom fetcher implementation for retrieving domain lists |
+| Option              | Type       | Default          | Description                                                                           |
+| ------------------- | ---------- | ---------------- | ------------------------------------------------------------------------------------- |
+| `sources`           | `string[]` | jsDelivr CDN URL | Source URLs returning JSON arrays of disposable domains                               |
+| `storagePath`       | `string`   | `''`             | Local file path to persist fetched domains. When empty, only the bundled list is used |
+| `whitelist`         | `string[]` | `[]`             | Domains to exclude from the disposable list (allow through validation)                |
+| `includeSubdomains` | `boolean`  | `false`          | When `true`, subdomains of disposable domains are also rejected                       |
+| `fetcher`           | `Fetcher`  | `DefaultFetcher` | Custom fetcher implementation for retrieving domain lists                             |
 
 ## Features
 
@@ -278,10 +282,11 @@ By default, only exact domain matches are checked. Enable `includeSubdomains` to
 ```typescript
 DisposableEmailModule.forRoot({
   includeSubdomains: true,
-})
+});
 ```
 
 With this enabled:
+
 - `user@mailinator.com` → **blocked** (exact match)
 - `user@sub.mailinator.com` → **blocked** (subdomain match)
 - `user@gmail.com` → **allowed**
@@ -292,8 +297,8 @@ If a domain appears in the disposable list but you want to allow it, add it to t
 
 ```typescript
 DisposableEmailModule.forRoot({
-  whitelist: ['example.com', 'legitimate-service.com'],
-})
+  whitelist: ["example.com", "legitimate-service.com"],
+});
 ```
 
 Whitelisted domains are removed from the disposable set at load time, so there is no per-validation overhead.
@@ -303,13 +308,13 @@ Whitelisted domains are removed from the disposable set at load time, so there i
 By default, the package uses the native `fetch()` API to retrieve domain lists. If your application runs behind a proxy or needs custom headers, implement the `Fetcher` interface:
 
 ```typescript
-import { Fetcher } from '@nestbolt/disposable-email';
-import { HttpsProxyAgent } from 'https-proxy-agent';
+import { Fetcher } from "@nestbolt/disposable-email";
+import { HttpsProxyAgent } from "https-proxy-agent";
 
 export class ProxyFetcher implements Fetcher {
   async fetch(url: string): Promise<string[]> {
     const response = await fetch(url, {
-      agent: new HttpsProxyAgent('http://your-proxy:8080'),
+      agent: new HttpsProxyAgent("http://your-proxy:8080"),
     });
 
     if (!response.ok) {
@@ -326,7 +331,7 @@ Then pass it in the module configuration:
 ```typescript
 DisposableEmailModule.forRoot({
   fetcher: new ProxyFetcher(),
-})
+});
 ```
 
 ### Updating the Domains List
@@ -336,9 +341,9 @@ The package ships with a bundled `domains.json` containing thousands of known di
 #### With a Cron Job (using `@nestjs/schedule`)
 
 ```typescript
-import { Injectable } from '@nestjs/common';
-import { Cron, CronExpression } from '@nestjs/schedule';
-import { DisposableEmailService } from '@nestbolt/disposable-email';
+import { Injectable } from "@nestjs/common";
+import { Cron, CronExpression } from "@nestjs/schedule";
+import { DisposableEmailService } from "@nestbolt/disposable-email";
 
 @Injectable()
 export class DomainsUpdateTask {
@@ -354,18 +359,18 @@ export class DomainsUpdateTask {
 #### From a Controller / Admin Endpoint
 
 ```typescript
-import { Controller, Post, UseGuards } from '@nestjs/common';
-import { DisposableEmailService } from '@nestbolt/disposable-email';
+import { Controller, Post, UseGuards } from "@nestjs/common";
+import { DisposableEmailService } from "@nestbolt/disposable-email";
 
-@Controller('admin')
+@Controller("admin")
 export class AdminController {
   constructor(private readonly disposableEmail: DisposableEmailService) {}
 
-  @Post('update-disposable-domains')
+  @Post("update-disposable-domains")
   @UseGuards(AdminGuard)
   async updateDomains() {
     await this.disposableEmail.updateDomains();
-    return { message: 'Disposable domains list updated successfully' };
+    return { message: "Disposable domains list updated successfully" };
   }
 }
 ```
@@ -377,8 +382,8 @@ export class AdminController {
 The `@IsNotDisposableEmail()` decorator also works **without** registering the NestJS module. In this mode, it falls back to the bundled `domains.json` list directly:
 
 ```typescript
-import { validate } from 'class-validator';
-import { IsNotDisposableEmail } from '@nestbolt/disposable-email';
+import { validate } from "class-validator";
+import { IsNotDisposableEmail } from "@nestbolt/disposable-email";
 
 class EmailDto {
   @IsNotDisposableEmail()
@@ -386,7 +391,7 @@ class EmailDto {
 }
 
 const dto = new EmailDto();
-dto.email = 'user@mailinator.com';
+dto.email = "user@mailinator.com";
 
 const errors = await validate(dto);
 // errors[0].constraints.isNotDisposableEmail === 'Disposable email addresses are not allowed.'
@@ -427,7 +432,6 @@ If you discover any security-related issues, please report them via [GitHub Issu
 ## Credits
 
 - Disposable domains list from [disposable/disposable](https://github.com/disposable/disposable)
-- Inspired by [Laravel Disposable Email](https://github.com/Propaganistas/Laravel-Disposable-Email) by [Propaganistas](https://github.com/Propaganistas)
 
 ## License
 
