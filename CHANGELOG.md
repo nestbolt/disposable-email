@@ -2,6 +2,14 @@
 
 All notable changes to `@nestbolt/disposable-email` will be documented in this file.
 
+## 0.2.0 — Documentation
+
+### Added
+
+- **LICENSE.md** — MIT license file
+- **CONTRIBUTING.md** — Contribution guidelines
+- **CHANGELOG.md** — Project changelog
+
 ## 0.1.0 — Initial Release
 
 ### Features
