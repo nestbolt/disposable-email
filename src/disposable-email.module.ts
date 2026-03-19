@@ -1,11 +1,8 @@
-import { DynamicModule, Module } from '@nestjs/common';
-import { DISPOSABLE_EMAIL_OPTIONS } from './disposable-email.constants';
-import { DisposableEmailService } from './disposable-email.service';
-import {
-  DisposableEmailAsyncOptions,
-  DisposableEmailOptions,
-} from './interfaces';
-import { IsNotDisposableEmailConstraint } from './validators';
+import { DynamicModule, Module } from "@nestjs/common";
+import { DISPOSABLE_EMAIL_OPTIONS } from "./disposable-email.constants";
+import { DisposableEmailService } from "./disposable-email.service";
+import { DisposableEmailAsyncOptions, DisposableEmailOptions } from "./interfaces";
+import { IsNotDisposableEmailConstraint } from "./validators";
 
 @Module({})
 export class DisposableEmailModule {

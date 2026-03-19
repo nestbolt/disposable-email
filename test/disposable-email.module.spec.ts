@@ -1,12 +1,12 @@
-import { describe, it, expect } from 'vitest';
-import { Test } from '@nestjs/testing';
-import { DisposableEmailModule } from '../src/disposable-email.module';
-import { DisposableEmailService } from '../src/disposable-email.service';
-import { IsNotDisposableEmailConstraint } from '../src/validators';
+import { describe, it, expect } from "vitest";
+import { Test } from "@nestjs/testing";
+import { DisposableEmailModule } from "../src/disposable-email.module";
+import { DisposableEmailService } from "../src/disposable-email.service";
+import { IsNotDisposableEmailConstraint } from "../src/validators";
 
-describe('DisposableEmailModule', () => {
-  describe('forRoot', () => {
-    it('should create a module with default options', async () => {
+describe("DisposableEmailModule", () => {
+  describe("forRoot", () => {
+    it("should create a module with default options", async () => {
       const module = await Test.createTestingModule({
         imports: [DisposableEmailModule.forRoot()],
       }).compile();
@@ -18,11 +18,11 @@ describe('DisposableEmailModule', () => {
       expect(constraint).toBeDefined();
     });
 
-    it('should create a module with custom options', async () => {
+    it("should create a module with custom options", async () => {
       const module = await Test.createTestingModule({
         imports: [
           DisposableEmailModule.forRoot({
-            whitelist: ['mailinator.com'],
+            whitelist: ["mailinator.com"],
             includeSubdomains: true,
           }),
         ],
@@ -31,10 +31,10 @@ describe('DisposableEmailModule', () => {
       const service = module.get(DisposableEmailService);
       service.bootstrap();
 
-      expect(service.isDisposable('user@mailinator.com')).toBe(false);
+      expect(service.isDisposable("user@mailinator.com")).toBe(false);
     });
 
-    it('should return a global dynamic module', () => {
+    it("should return a global dynamic module", () => {
       const result = DisposableEmailModule.forRoot();
 
       expect(result.global).toBe(true);
@@ -44,13 +44,13 @@ describe('DisposableEmailModule', () => {
     });
   });
 
-  describe('forRootAsync', () => {
-    it('should create a module with async factory', async () => {
+  describe("forRootAsync", () => {
+    it("should create a module with async factory", async () => {
       const module = await Test.createTestingModule({
         imports: [
           DisposableEmailModule.forRootAsync({
             useFactory: () => ({
-              whitelist: ['mailinator.com'],
+              whitelist: ["mailinator.com"],
             }),
           }),
         ],
@@ -60,13 +60,13 @@ describe('DisposableEmailModule', () => {
       service.bootstrap();
 
       expect(service).toBeDefined();
-      expect(service.isDisposable('user@mailinator.com')).toBe(false);
+      expect(service.isDisposable("user@mailinator.com")).toBe(false);
     });
 
-    it('should support inject and imports options', () => {
+    it("should support inject and imports options", () => {
       const result = DisposableEmailModule.forRootAsync({
         imports: [],
-        inject: ['CONFIG'],
+        inject: ["CONFIG"],
         useFactory: () => ({}),
       });
 
@@ -75,7 +75,7 @@ describe('DisposableEmailModule', () => {
       expect(result.exports).toContain(DisposableEmailService);
     });
 
-    it('should default imports and inject to empty arrays', () => {
+    it("should default imports and inject to empty arrays", () => {
       const result = DisposableEmailModule.forRootAsync({
         useFactory: () => ({}),
       });

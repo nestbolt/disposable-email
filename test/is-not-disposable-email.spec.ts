@@ -74,9 +74,7 @@ describe("IsNotDisposableEmailConstraint", () => {
       const result = constraint.validate("user@gmail.com");
 
       expect(result).toBe(true);
-      expect(mockService.isNotDisposable).toHaveBeenCalledWith(
-        "user@gmail.com",
-      );
+      expect(mockService.isNotDisposable).toHaveBeenCalledWith("user@gmail.com");
     });
 
     it("should return false via service for disposable email", () => {
@@ -124,9 +122,7 @@ describe("IsNotDisposableEmailConstraint", () => {
   describe("defaultMessage", () => {
     it("should return the correct default message", () => {
       const constraint = new IsNotDisposableEmailConstraint();
-      expect(constraint.defaultMessage()).toBe(
-        "Disposable email addresses are not allowed.",
-      );
+      expect(constraint.defaultMessage()).toBe("Disposable email addresses are not allowed.");
     });
   });
 });

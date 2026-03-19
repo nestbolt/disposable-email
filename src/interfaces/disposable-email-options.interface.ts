@@ -1,4 +1,4 @@
-import { Fetcher } from './fetcher.interface';
+import { Fetcher } from "./fetcher.interface";
 
 export interface DisposableEmailOptions {
   /**
@@ -34,7 +34,5 @@ export interface DisposableEmailOptions {
 export interface DisposableEmailAsyncOptions {
   imports?: any[];
   inject?: any[];
-  useFactory: (
-    ...args: any[]
-  ) => Promise<DisposableEmailOptions> | DisposableEmailOptions;
+  useFactory: (...args: any[]) => Promise<DisposableEmailOptions> | DisposableEmailOptions;
 }

@@ -120,9 +120,7 @@ export class DisposableEmailService implements OnModuleInit {
     if (this.storagePath) {
       try {
         writeFileSync(this.storagePath, JSON.stringify(allDomains));
-        this.logger.log(
-          `Saved ${allDomains.length} domains to ${this.storagePath}`,
-        );
+        this.logger.log(`Saved ${allDomains.length} domains to ${this.storagePath}`);
       } catch (error) {
         this.logger.error(`Failed to write to ${this.storagePath}`, error);
       }
@@ -141,9 +139,7 @@ export class DisposableEmailService implements OnModuleInit {
     const resolved = isAbsolute(raw) ? raw : resolve(raw);
 
     if (!resolved.endsWith(".json")) {
-      throw new Error(
-        `Invalid storagePath "${resolved}": must end with .json`,
-      );
+      throw new Error(`Invalid storagePath "${resolved}": must end with .json`);
     }
 
     return resolved;

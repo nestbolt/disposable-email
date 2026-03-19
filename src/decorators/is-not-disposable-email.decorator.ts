@@ -1,5 +1,5 @@
-import { registerDecorator, ValidationOptions } from 'class-validator';
-import { IsNotDisposableEmailConstraint } from '../validators';
+import { registerDecorator, ValidationOptions } from "class-validator";
+import { IsNotDisposableEmailConstraint } from "../validators";
 
 /**
  * Validates that an email address does not belong to a disposable email service.
@@ -11,15 +11,13 @@ import { IsNotDisposableEmailConstraint } from '../validators';
  *   email: string;
  * }
  */
-export function IsNotDisposableEmail(
-  validationOptions?: ValidationOptions,
-): PropertyDecorator {
+export function IsNotDisposableEmail(validationOptions?: ValidationOptions): PropertyDecorator {
   return function (object: object, propertyName: string) {
     registerDecorator({
       target: object.constructor,
       propertyName,
       options: {
-        message: 'Disposable email addresses are not allowed.',
+        message: "Disposable email addresses are not allowed.",
         ...validationOptions,
       },
       validator: IsNotDisposableEmailConstraint,

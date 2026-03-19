@@ -1,1 +1,1 @@
-export { DefaultFetcher } from './default.fetcher';
+export { DefaultFetcher } from "./default.fetcher";

@@ -1,8 +1,5 @@
 import { Injectable, Optional } from "@nestjs/common";
-import {
-  ValidatorConstraint,
-  ValidatorConstraintInterface,
-} from "class-validator";
+import { ValidatorConstraint, ValidatorConstraintInterface } from "class-validator";
 import { readFileSync } from "fs";
 import { BUNDLED_DOMAINS_PATH } from "../disposable-email.constants";
 import { DisposableEmailService } from "../disposable-email.service";
@@ -36,18 +33,17 @@ export class IsNotDisposableEmailConstraint implements ValidatorConstraintInterf
     if (!IsNotDisposableEmailConstraint.fallbackDomains) {
       try {
         const raw = readFileSync(BUNDLED_DOMAINS_PATH, "utf-8");
-        IsNotDisposableEmailConstraint.fallbackDomains = new Set(
-          JSON.parse(raw),
-        );
+        IsNotDisposableEmailConstraint.fallbackDomains = new Set(JSON.parse(raw));
       } catch {
         return false;
       }
     }
 
+    const domains = IsNotDisposableEmailConstraint.fallbackDomains;
     const parts = email.split("@");
     if (parts.length !== 2 || !parts[1]) return false;
     const domain = parts[1].toLowerCase();
 
-    return IsNotDisposableEmailConstraint.fallbackDomains!.has(domain);
+    return domains.has(domain);
   }
 }

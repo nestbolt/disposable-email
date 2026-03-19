@@ -1,0 +1,17 @@
+src/
+test/
+coverage/
+.github/
+node_modules/
+*.tsbuildinfo
+*.js.map
+*.d.ts.map
+.gitignore
+.npmignore
+.prettierrc
+eslint.config.mjs
+tsconfig.json
+tsconfig.build.json
+vitest.config.ts
+CONTRIBUTING.md
+tasks.*
