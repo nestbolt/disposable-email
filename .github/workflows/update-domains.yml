@@ -16,7 +16,7 @@ jobs:
           fetch-depth: "0"
 
       - name: Download new file
-        run: curl -fsSL https://cdn.jsdelivr.net/gh/andreis/disposable-email-domains@master/domains.json --output domains.json
+        run: curl -fsSL https://cdn.jsdelivr.net/gh/disposable/disposable-email-domains@master/domains.json --output domains.json
 
       - name: Determine next patch version
         id: versioning

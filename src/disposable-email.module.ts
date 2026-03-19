@@ -54,7 +54,7 @@ export class DisposableEmailModule {
       providers: [
         {
           provide: DISPOSABLE_EMAIL_OPTIONS,
-          useFactory: options.useFactory!,
+          useFactory: options.useFactory,
           inject: options.inject ?? [],
         },
         DisposableEmailService,
