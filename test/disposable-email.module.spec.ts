@@ -29,7 +29,7 @@ describe("DisposableEmailModule", () => {
       }).compile();
 
       const service = module.get(DisposableEmailService);
-      service.bootstrap();
+      await service.bootstrap();
 
       expect(service.isDisposable("user@mailinator.com")).toBe(false);
     });
@@ -57,7 +57,7 @@ describe("DisposableEmailModule", () => {
       }).compile();
 
       const service = module.get(DisposableEmailService);
-      service.bootstrap();
+      await service.bootstrap();
 
       expect(service).toBeDefined();
       expect(service.isDisposable("user@mailinator.com")).toBe(false);

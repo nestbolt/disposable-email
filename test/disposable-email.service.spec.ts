@@ -25,7 +25,7 @@ describe("DisposableEmailService", () => {
     }).compile();
 
     const svc = module.get<DisposableEmailService>(DisposableEmailService);
-    svc.bootstrap();
+    await svc.bootstrap();
     return svc;
   }
 
@@ -94,6 +94,17 @@ describe("DisposableEmailService", () => {
       const svc = await createService({ includeSubdomains: true });
       expect(svc.isDisposable("user@sub.mailinator.com")).toBe(true);
     });
+
+    it("should match deeply nested subdomains", async () => {
+      const svc = await createService({ includeSubdomains: true });
+      expect(svc.isDisposable("user@a.b.c.mailinator.com")).toBe(true);
+    });
+
+    it("should not match partial domain name overlaps", async () => {
+      const svc = await createService({ includeSubdomains: true });
+      // "xyzmailinator.com" is not a subdomain of "mailinator.com"
+      expect(svc.isDisposable("user@xyzgmail.com")).toBe(false);
+    });
   });
 
   describe("getDomains", () => {
@@ -117,9 +128,9 @@ describe("DisposableEmailService", () => {
       }).compile();
 
       const svc = module.get<DisposableEmailService>(DisposableEmailService);
-      const bootstrapSpy = vi.spyOn(svc, "bootstrap");
+      const bootstrapSpy = vi.spyOn(svc, "bootstrap").mockResolvedValue();
 
-      svc.onModuleInit();
+      await svc.onModuleInit();
 
       expect(bootstrapSpy).toHaveBeenCalled();
     });
